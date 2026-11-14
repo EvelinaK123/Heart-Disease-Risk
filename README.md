@@ -21,12 +21,14 @@ The supplied file has 11 predictor fields matching the Triage page: `Age`, `Sex`
 
 ## Windows PowerShell setup and training
 
-Install Python 3.10 or newer and Git. Then open PowerShell and run these commands from the folder where you want the project:
+Install Python 3.12 for your Windows account in its default location, plus Git. Then open PowerShell and run these commands from the folder where you want the project:
 
 ```powershell
 git clone https://github.com/EvelinaK123/Heart-Disease-Risk.git
 Set-Location .\Heart-Disease-Risk
-py -3 -m venv .venv
+$python = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
+if (-not (Test-Path $python)) { throw "Install Python 3.12 for your account, then retry." }
+& $python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item "$HOME\Downloads\heart.csv" .\data\heart.csv
 ```
@@ -47,12 +49,12 @@ This writes the fitted preprocessing-and-model pipeline to `models\heart_disease
 
 ## macOS / Linux setup and training
 
-Install Python 3.10 or newer and Git. In Terminal, run:
+Install Python 3.12 and Git. In Terminal, run:
 
 ```bash
 git clone https://github.com/EvelinaK123/Heart-Disease-Risk.git
 cd Heart-Disease-Risk
-python3 -m venv .venv
+python3.12 -m venv .venv
 ./.venv/bin/python -m pip install -r requirements.txt
 cp ~/Downloads/heart.csv ./data/heart.csv
 ./.venv/bin/python ./src/eda.py --data ./data/heart.csv
