@@ -19,48 +19,27 @@ The supplied file has 11 predictor fields matching the Triage page: `Age`, `Sex`
 - `models/heart_disease_pipeline.joblib` — created locally by training; ignored by Git.
 - `.gitignore` — keeps the private dataset, fitted model, virtual environment, and prediction outputs out of commits.
 
-## Windows PowerShell setup and training
+## Use GitHub Codespaces
 
-Install Python 3.12 for your Windows account in its default location, plus Git. Then open PowerShell and run these commands from the folder where you want the project:
+This repository includes a Python 3.12 Codespaces configuration. When the Codespace is created, it builds a virtual environment and installs the packages listed in `requirements.txt`.
 
-```powershell
-git clone https://github.com/EvelinaK123/Heart-Disease-Risk.git
-Set-Location .\Heart-Disease-Risk
-$python = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
-if (-not (Test-Path $python)) { throw "Install Python 3.12 for your account, then retry." }
-& $python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item "$HOME\Downloads\heart.csv" .\data\heart.csv
-```
+1. Open [this repository](https://github.com/EvelinaK123/Heart-Disease-Risk).
+2. Select **Code** → **Codespaces** → **Create codespace on main**.
+3. Wait for the Codespace to finish setting up.
 
-The next command inspects the CSV and writes `reports/eda_report.md`:
+### Dataset prerequisite
 
-```powershell
-..venv\Scripts\python.exe .\src\eda.py --data .\data\heart.csv
-```
+The repository intentionally does not include `data/heart.csv`. Training requires that file at `data/heart.csv` inside the Codespace. It has not been transferred into the Codespace. If you choose to place it there, keep it out of commits; `.gitignore` excludes it.
 
-Train and evaluate the models:
-
-```powershell
-..venv\Scripts\python.exe .\src\train.py --data .\data\heart.csv
-```
-
-This writes the fitted preprocessing-and-model pipeline to `models\heart_disease_pipeline.joblib` and evaluation outputs to `reports\`. The training command uses a fixed random seed so the split and model setup are reproducible with the listed package versions.
-
-## macOS / Linux setup and training
-
-Install Python 3.12 and Git. In Terminal, run:
+After the file is available in the Codespace, run these commands in its terminal:
 
 ```bash
-git clone https://github.com/EvelinaK123/Heart-Disease-Risk.git
-cd Heart-Disease-Risk
-python3.12 -m venv .venv
-./.venv/bin/python -m pip install -r requirements.txt
-cp ~/Downloads/heart.csv ./data/heart.csv
-./.venv/bin/python ./src/eda.py --data ./data/heart.csv
-./.venv/bin/python ./src/train.py --data ./data/heart.csv
+.venv/bin/python src/eda.py --data data/heart.csv
+.venv/bin/python src/train.py --data data/heart.csv
 ```
 
+The fitted preprocessing-and-model pipeline is written to `models/heart_disease_pipeline.joblib`. The evaluation outputs are written to `reports/`. The dataset and model are ignored by Git.
+  
 ## Make predictions
 
 The prediction input needs the 11 predictor columns and does not need a `HeartDisease` column. Category values should be text labels from the CSV: `Sex` is `F` or `M`; `ChestPainType` is `ASY`, `ATA`, `NAP`, or `TA`; `RestingECG` is `LVH`, `Normal`, or `ST`; `ExerciseAngina` is `N` or `Y`; `ST_Slope` is `Down`, `Flat`, or `Up`. The model uses these actual labels rather than numeric codes from another page. Unseen categories are handled by the saved preprocessing pipeline without crashing, though this project's data cannot teach it what those categories mean.
