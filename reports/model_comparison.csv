@@ -1,0 +1,4 @@
+model,mean_balanced_accuracy,std_balanced_accuracy
+Logistic Regression,0.8470221076725142,0.043972217846206814
+Random Forest,0.8502317104756129,0.04096936385186951
+
