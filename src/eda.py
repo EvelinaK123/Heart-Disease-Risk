@@ -94,10 +94,13 @@ def build_report(frame: pd.DataFrame, source: str) -> str:
     bad_target = int((~pd.to_numeric(frame[TARGET], errors="coerce").isin([0, 1])).sum())
     checks = [
         f"- `Cholesterol == 0`: **{int((pd.to_numeric(frame['Cholesterol'], errors='coerce') == 0).sum())}** rows.",
+        f"- `Cholesterol` outside the broad software sanity range 0–1000: **{count_outside(frame['Cholesterol'], 0, 1000)}** rows (zero values are reported separately above).",
         f"- `RestingBP == 0`: **{int((pd.to_numeric(frame['RestingBP'], errors='coerce') == 0).sum())}** rows.",
         f"- `RestingBP <= 0`: **{int((pd.to_numeric(frame['RestingBP'], errors='coerce') <= 0).sum())}** rows.",
+        f"- `RestingBP` above the broad software sanity limit of 300: **{int((pd.to_numeric(frame['RestingBP'], errors='coerce') > 300).sum())}** rows.",
         f"- `Age` outside the broad software sanity range 0–120: **{count_outside(frame['Age'], 0, 120)}** rows.",
         f"- `MaxHR` outside the broad software sanity range 0–300: **{count_outside(frame['MaxHR'], 0, 300)}** rows.",
+        f"- `Oldpeak` outside the broad software sanity range -10–20: **{count_outside(frame['Oldpeak'], -10, 20)}** rows.",
         f"- `FastingBS` outside the dataset's 0/1 values: **{bad_fasting}** rows.",
         f"- `HeartDisease` outside the dataset's 0/1 labels: **{bad_target}** rows.",
     ]
@@ -135,7 +138,7 @@ def main() -> None:
     args = parser.parse_args()
 
     frame = read_csv(args.data)
-    report = build_report(frame, str(Path(args.data)))
+    report = build_report(frame, Path(args.data).as_posix())
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(report, encoding="utf-8")
