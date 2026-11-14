@@ -1,0 +1,15 @@
+# Local copy of the supplied dataset (never commit or upload it)
+data/heart.csv
+
+# Fitted models and generated prediction files
+models/*.joblib
+models/*.pkl
+predictions/
+
+# Local virtual environment and Python cache
+.venv/
+__pycache__/
+*.py[cod]
+
+# Keep the sample CSV and generated aggregate reports tracked.
+
