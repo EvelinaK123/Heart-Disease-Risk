@@ -1,6 +1,6 @@
 # Data inspection and EDA report
 
-Source file: `data/heart.csv` (the user's supplied CSV)
+Source file: `data/heart.csv`
 
 ## File overview
 
@@ -12,30 +12,29 @@ Source file: `data/heart.csv` (the user's supplied CSV)
 
 ## Data types and missing values
 
-The CSV's six numeric predictor columns and the target load as numeric values; the five category columns load as text. The inspection found no missing values.
-
 | Column | Loaded data type | Missing values | Distinct non-missing values |
 |---|---:|---:|---:|
-| `Age` | integer | 0 | 50 |
-| `Sex` | text | 0 | 2 |
-| `ChestPainType` | text | 0 | 4 |
-| `RestingBP` | integer | 0 | 67 |
-| `Cholesterol` | integer | 0 | 222 |
-| `FastingBS` | integer | 0 | 2 |
-| `RestingECG` | text | 0 | 3 |
-| `MaxHR` | integer | 0 | 119 |
-| `ExerciseAngina` | text | 0 | 2 |
-| `Oldpeak` | decimal | 0 | 53 |
-| `ST_Slope` | text | 0 | 3 |
-| `HeartDisease` | integer | 0 | 2 |
+| `Age` | `int64` | 0 | 50 |
+| `Sex` | `object` | 0 | 2 |
+| `ChestPainType` | `object` | 0 | 4 |
+| `RestingBP` | `int64` | 0 | 67 |
+| `Cholesterol` | `int64` | 0 | 222 |
+| `FastingBS` | `int64` | 0 | 2 |
+| `RestingECG` | `object` | 0 | 3 |
+| `MaxHR` | `int64` | 0 | 119 |
+| `ExerciseAngina` | `object` | 0 | 2 |
+| `Oldpeak` | `float64` | 0 | 53 |
+| `ST_Slope` | `object` | 0 | 3 |
+| `HeartDisease` | `int64` | 0 | 2 |
 
 ## Duplicate rows
 
-Exact duplicate rows beyond the first copy: **0**. No rows are removed by inspection or training.
+Exact duplicate rows beyond the first copy: **0**.
+No rows are removed by the inspection or training scripts.
 
 ## Target balance
 
-`HeartDisease` is the dataset label: 1 means the dataset label is present; 0 means it is absent. This project predicts this dataset label.
+`HeartDisease` is the dataset label: 1 means the dataset label is present; 0 means it is absent. This is a prediction of the dataset label.
 
 | Dataset label | Rows | Share |
 |---:|---:|---:|
@@ -44,12 +43,12 @@ Exact duplicate rows beyond the first copy: **0**. No rows are removed by inspec
 
 ## Category values
 
-- `Sex`: `F` 193, `M` 725
-- `ChestPainType`: `ASY` 496, `ATA` 173, `NAP` 203, `TA` 46
-- `RestingECG`: `LVH` 188, `Normal` 552, `ST` 178
-- `ExerciseAngina`: `N` 547, `Y` 371
-- `ST_Slope`: `Down` 63, `Flat` 460, `Up` 395
-- `FastingBS`: `0` 704, `1` 214
+- `Sex`: `F`: 193, `M`: 725
+- `ChestPainType`: `ASY`: 496, `ATA`: 173, `NAP`: 203, `TA`: 46
+- `RestingECG`: `LVH`: 188, `Normal`: 552, `ST`: 178
+- `ExerciseAngina`: `N`: 547, `Y`: 371
+- `ST_Slope`: `Down`: 63, `Flat`: 460, `Up`: 395
+- `FastingBS`: `0`: 704, `1`: 214
 
 ## Numeric ranges and suspicious values
 
@@ -62,16 +61,22 @@ Exact duplicate rows beyond the first copy: **0**. No rows are removed by inspec
 | `MaxHR` | 60 | 138 | 202 | 0 |
 | `Oldpeak` | -2.6 | 0.6 | 6.2 | 368 |
 
-- Zero values in `Cholesterol`: **172**.
-- Zero values in `RestingBP`: **1**. This row also has `Cholesterol` 0; it is retained.
-- No negative `Age`, `Cholesterol`, or `MaxHR` values were found.
-- `FastingBS` contains only 0 and 1; `HeartDisease` contains only labels 0 and 1.
+- `Cholesterol == 0`: **172** rows.
+- `Cholesterol` outside the broad software sanity range 0–1000: **0** rows (zero values are reported separately above).
+- `RestingBP == 0`: **1** rows.
+- `RestingBP <= 0`: **1** rows.
+- `RestingBP` above the broad software sanity limit of 300: **0** rows.
+- `Age` outside the broad software sanity range 0–120: **0** rows.
+- `MaxHR` outside the broad software sanity range 0–300: **0** rows.
+- `Oldpeak` outside the broad software sanity range -10–20: **0** rows.
+- `FastingBS` outside the dataset's 0/1 values: **0** rows.
+- `HeartDisease` outside the dataset's 0/1 labels: **0** rows.
 
-These checks are data-quality flags, not clinical thresholds.
+The broad range checks are simple data-quality flags, not clinical thresholds.
 
 ## Cleaning decision
 
-The 172 zero values in `Cholesterol` and the one zero in `RestingBP` are reported as recorded. They are not changed to missing values, imputed, or used to remove rows. Exact duplicate rows are also retained. During model fitting, the preprocessing pipeline uses median or most-frequent imputation only if a true missing value is present; zero remains an ordinary numeric input.
+The 172 zero values in `Cholesterol` and the one zero in `RestingBP` are reported as recorded. They are not changed to missing values, imputed, or used to remove rows. Exact duplicate rows are also retained. The model pipeline uses median/most-frequent imputation only if a true missing value is present; zero is an ordinary numeric input to that pipeline.
 
 ## Scope note
 
